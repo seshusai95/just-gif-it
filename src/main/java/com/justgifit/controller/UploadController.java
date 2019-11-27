@@ -10,6 +10,8 @@ import org.bytedeco.javacv.FrameGrabber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +40,9 @@ public class UploadController {
     @Inject
     private VideoDecoderService videoDecoderService;
 
+    @Inject
+    private MessageSource messageSource;
+
     @RequestMapping(value = "/upload", method = RequestMethod.POST, produces = MediaType.IMAGE_GIF_VALUE)
     public String upload(@RequestPart("file") MultipartFile file, @RequestParam("start") int start, @RequestParam("end") int end, @RequestParam("speed") int speed, @RequestParam("repeat") boolean repeat) throws IOException, FrameGrabber.Exception {
         File videoFile = new File(location + "/" + file.getOriginalFilename());
@@ -54,5 +59,11 @@ public class UploadController {
         log.info("Saved generated gif to {}", output.toString());
 
         return output.getFileName().toString();
+    }
+
+    @RequestMapping(value = "/getgreeting", method = RequestMethod.GET)
+    public String getGreeting() {
+        String[] params = new String[]{"Seshu", "Chennupati"};
+        return messageSource.getMessage("good.morning", null, LocaleContextHolder.getLocale());
     }
 }
